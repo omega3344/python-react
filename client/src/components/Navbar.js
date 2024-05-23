@@ -4,8 +4,8 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="#">
-          Navbar
+        <Link className="navbar-brand" to="/">
+          Flask & React
         </Link>
         <button
           className="navbar-toggler"
@@ -21,23 +21,8 @@ export default function Navbar() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link className="nav-link active" aria-current="page" to="#">
-                Home
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="#">
-                Features
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="#">
-                Pricing
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link disabled" aria-disabled="true">
-                Disabled
+              <Link className="nav-link active" aria-current="page" to="/about">
+                About
               </Link>
             </li>
           </ul>
