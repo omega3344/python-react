@@ -3,6 +3,7 @@ from flask_pymongo import PyMongo
 from flask_cors import CORS
 
 app = Flask(__name__)
+cors = CORS(app)
 app.config['MONGO_URI']='mongodb://localhost/pythonractdb'
 mongo = PyMongo(app)
 

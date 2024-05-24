@@ -7,23 +7,49 @@ export default function Users() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const [editing, setEditing] = useState(false)
+  const [id, setId] = useState('')
+
   const [users, setUsers] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch(`${API}/users`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-      }),
-    });
-    const data = await res.json();
-    console.log(data);
+
+    if(!editing) {
+      const res = await fetch(`${API}/users`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+      const data = await res.json();  
+    }else{
+      const res = await fetch(`${API}/users/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+      const data = await res.json(); 
+      setEditing(false)
+      setId('')
+    }
+
+    await getUsers()
+
+    setName('')
+    setEmail('')
+    setPassword('')
   };
 
   const getUsers = async () => {
@@ -35,6 +61,29 @@ export default function Users() {
   useEffect(() => {
     getUsers();
   }, []);
+
+  const editUser = async (id) => {
+    const res = await fetch(`${API}/user/${id}`);
+    const data = await res.json();
+
+    setEditing(true)
+    setId(id)
+
+    setName(data.name)
+    setEmail(data.email)
+    setPassword(data.password)
+  }
+
+  const deleteUser = async (id) => {
+    const userResponse = window.confirm('Are you sure you want to delete ir?')
+    if (userResponse) {
+      const res = await fetch(`${API}/users/${id}`, {
+        method: 'DELETE'
+      })
+      await res.json()
+      await getUsers()
+    }
+  }
 
   return (
     <div className="row">
@@ -64,7 +113,9 @@ export default function Users() {
               placeholder="Password"
             />
           </div>
-          <button className="btn btn-primary btn-block">Create</button>
+          <button className="btn btn-primary btn-block">
+            {editing ? 'Update' : 'Create'}
+          </button>
         </form>
       </div>
       <div className="col-md-6">
@@ -86,13 +137,13 @@ export default function Users() {
                 <td>
                   <button 
                     className="btn btn-secondary btn-sm btn-block"
-                    onClick={}
+                    onClick={() => editUser(user._d)}
                     >
                     Edit
                   </button>
                   <button 
                     className="btn btn-danger btn-sm btn-block"
-                    onClick={}
+                    onClick={() => deleteUser(user._d)}
                     >
                     Delete
                   </button>
