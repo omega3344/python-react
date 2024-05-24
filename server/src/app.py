@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_pymongo import PyMongo, MongoClient
 from flask_cors import CORS
 
@@ -14,8 +14,8 @@ except Exception as e:
 '''
 
 app.config['MONGO_DBNAME'] = 'guimadiesel'
-#app.config['MONGO_URI']= 'mongodb://127.0.0.1:27017/guimadiesel'
-app.config['MONGO_URI']='mongodb+srv://omega3344:KKK691dd@cluster0.gmd3vkc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+app.config['MONGO_URI']= 'mongodb://127.0.0.1:27017/guimadiesel'
+#app.config['MONGO_URI']='mongodb+srv://omega3344:KKK691dd@cluster0.gmd3vkc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 
 print(f"MONGO_URI: {app.config['MONGO_URI']}")
 
@@ -33,6 +33,7 @@ def createUser():
 
 @app.route('/users', methods=['GET'])
 def getUsers():
+    print(request.json)
     return 'received'
 
 @app.route('/user/<id>', methods=['GET'])
