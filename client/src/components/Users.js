@@ -83,7 +83,6 @@ export default function Users() {
       const res = await fetch(`${API}/users/${id}`, {
         method: 'DELETE',
       });
-      await res.json();
       await getUsers();
     }
   };
