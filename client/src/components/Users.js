@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const API = process.env.REACT_APP_API;
 
@@ -9,6 +9,8 @@ export default function Users() {
 
   const [editing, setEditing] = useState(false);
   const [id, setId] = useState('');
+
+  const nameInput = useRef(null);
 
   const [users, setUsers] = useState([]);
 
@@ -28,7 +30,6 @@ export default function Users() {
         }),
       });
       const data = await res.json();
-      console.log(data);
     } else {
       const res = await fetch(`${API}/users/${id}`, {
         method: 'PUT',
@@ -42,17 +43,16 @@ export default function Users() {
         }),
       });
       const data = await res.json();
-      console.log(data);
 
       setEditing(false);
       setId('');
     }
-
     await getUsers();
 
     setName('');
     setEmail('');
     setPassword('');
+    nameInput.current.focus();
   };
 
   const getUsers = async () => {
@@ -61,12 +61,8 @@ export default function Users() {
     setUsers(data);
   };
 
-  useEffect(() => {
-    getUsers();
-  }, []);
-
   const editUser = async (id) => {
-    const res = await fetch(`${API}/user/${id}`);
+    const res = await fetch(`${API}/users/${id}`);
     const data = await res.json();
 
     setEditing(true);
@@ -75,6 +71,7 @@ export default function Users() {
     setName(data.name);
     setEmail(data.email);
     setPassword(data.password);
+    nameInput.current.focus();
   };
 
   const deleteUser = async (id) => {
@@ -87,6 +84,10 @@ export default function Users() {
     }
   };
 
+  useEffect(() => {
+    getUsers();
+  }, []);
+
   return (
     <div className="row">
       <div className="col-md-4">
@@ -98,21 +99,26 @@ export default function Users() {
               value={name}
               className="form-control"
               placeholder="Name"
+              ref={nameInput}
               autoFocus
             />
+          </div>
+          <div className="form-group">
             <input
               type="email"
               onChange={(e) => setEmail(e.target.value)}
               value={email}
               className="form-control"
-              placeholder="Email"
+              placeholder="User's Email"
             />
+          </div>
+          <div className="form-group">
             <input
               type="password"
               onChange={(e) => setPassword(e.target.value)}
               value={password}
               className="form-control"
-              placeholder="Password"
+              placeholder="User's Password"
             />
           </div>
           <button className="btn btn-primary btn-block">
@@ -122,14 +128,14 @@ export default function Users() {
       </div>
       <div className="col-md-6">
         <table className="table table-striped">
-          <thread>
+          <thead>
             <tr>
               <th>Name</th>
               <th>Email</th>
               <th>Password</th>
               <th>Operations</th>
             </tr>
-          </thread>
+          </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user._id}>
@@ -139,13 +145,13 @@ export default function Users() {
                 <td>
                   <button
                     className="btn btn-secondary btn-sm btn-block"
-                    onClick={() => editUser(user._d)}
+                    onClick={() => editUser(user._id)}
                   >
                     Edit
                   </button>
                   <button
                     className="btn btn-danger btn-sm btn-block"
-                    onClick={() => deleteUser(user._d)}
+                    onClick={() => deleteUser(user._id)}
                   >
                     Delete
                   </button>

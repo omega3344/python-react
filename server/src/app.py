@@ -1,15 +1,17 @@
 from flask import Flask, request, jsonify
-from flask_pymongo import PyMongo, ObjectId
-from flask_cors import CORS
+from flask_pymongo import PyMongo
+from flask_cors import CORS, cross_origin
+from bson import ObjectId
 
 app = Flask(__name__)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MONGO_DBNAME'] = 'guimadiesel'
-app.config['MONGO_URI']= 'mongodb://127.0.0.1:27017/guimadiesel'
-#app.config['MONGO_URI']='mongodb+srv://omega3344:KKK691dd@cluster0.gmd3vkc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+app.config['MONGO_URI']= 'mongodb://localhost/guimadiesel'
+#app.config['MONGO_URI']= 'mongodb://127.0.0.1:27017/guimadiesel'
 
-CORS(app, origins={'http://localhost:3000', 'http://localhost:5000'})
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 try:
     mongo = PyMongo(app)
@@ -18,7 +20,9 @@ try:
 except Exception as e:
     print(f"Error connecting to MongoDB: {e}")
 
+
 @app.route('/users', methods=['POST'])
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def createUser():
     id = db.insert_one({
         'name': request.json['name'],
@@ -28,6 +32,7 @@ def createUser():
     return jsonify(str(ObjectId(id)))
 
 @app.route('/users', methods=['GET'])
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def getUsers():
     users = []
     for doc in db.find():
@@ -39,7 +44,7 @@ def getUsers():
         })
     return jsonify(users)
 
-@app.route('/user/<id>', methods=['GET'])
+@app.route('/users/<id>', methods=['GET'])
 def getUser(id):
     user = db.find_one({'_id': ObjectId(id)})
     return jsonify({
@@ -49,7 +54,7 @@ def getUser(id):
         'password': user['password']
     })
 
-@app.route('/user/<id>', methods=['DELETE'])
+@app.route('/users/<id>', methods=['DELETE'])
 def deleteUser(id):
     db.delete_one({'_id': ObjectId(id)})
     return jsonify({'msg': 'User deleted'})
