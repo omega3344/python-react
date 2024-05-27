@@ -29,7 +29,7 @@ export default function Users() {
           password,
         }),
       });
-      const data = await res.json();
+      await res.json();
     } else {
       const res = await fetch(`${API}/users/${id}`, {
         method: 'PUT',
@@ -42,7 +42,7 @@ export default function Users() {
           password,
         }),
       });
-      const data = await res.json();
+      await res.json();
 
       setEditing(false);
       setId('');
@@ -75,9 +75,9 @@ export default function Users() {
   };
 
   const deleteUser = async (id) => {
-    const userResponse = window.confirm('Are you sure you want to delete ir?');
+    const userResponse = window.confirm('Are you sure you want to delete it?');
     if (userResponse) {
-      const res = await fetch(`${API}/users/${id}`, {
+      await fetch(`${API}/users/${id}`, {
         method: 'DELETE',
       });
       await getUsers();

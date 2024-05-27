@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from flask_pymongo import PyMongo
+from flask_pymongo import PyMongo, MongoClient
 from flask_cors import CORS, cross_origin
 from bson import ObjectId
 
@@ -7,14 +7,14 @@ app = Flask(__name__)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MONGO_DBNAME'] = 'guimadiesel'
-app.config['MONGO_URI']= 'mongodb://localhost/guimadiesel'
-#app.config['MONGO_URI']= 'mongodb://127.0.0.1:27017/guimadiesel'
+#app.config['MONGO_URI']= 'mongodb://localhost/guimadiesel'
+app.config['MONGO_URI']= 'mongodb+srv://omega3344:KKK691dd@cluster0.gmd3vkc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-app.config['CORS_HEADERS'] = 'Content-Type'
+cors = CORS(app, resources={r"/users/*": {"origins": "*"}})
 
 try:
-    mongo = PyMongo(app)
+    mongo = MongoClient(app)
+    #mongo = PyMongo(app)
     db = mongo.db.users
     print("MongoDB connection established successfully.")
 except Exception as e:
@@ -22,17 +22,16 @@ except Exception as e:
 
 
 @app.route('/users', methods=['POST'])
-@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def createUser():
     id = db.insert_one({
         'name': request.json['name'],
         'email': request.json['email'],
         'password': request.json['password']
     })   
-    return jsonify(str(ObjectId(id)))
+    #return{}
+    return jsonify(str(id.inserted_id))
 
 @app.route('/users', methods=['GET'])
-@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def getUsers():
     users = []
     for doc in db.find():
