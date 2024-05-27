@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo, MongoClient
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from bson import ObjectId
 
 app = Flask(__name__)
@@ -8,13 +8,13 @@ app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MONGO_DBNAME'] = 'guimadiesel'
 #app.config['MONGO_URI']= 'mongodb://localhost/guimadiesel'
-app.config['MONGO_URI']= 'mongodb+srv://omega3344:KKK691dd@cluster0.gmd3vkc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+app.config['MONGO_URI']= 'mongodb+srv://omega3344:KKK691dd@cluster0.gmd3vkc.mongodb.net/guimadiesel?retryWrites=true&w=majority'
 
 cors = CORS(app, resources={r"/users/*": {"origins": "*"}})
 
 try:
-    mongo = MongoClient(app)
-    #mongo = PyMongo(app)
+    #mongo = MongoClient(app)
+    mongo = PyMongo(app)
     db = mongo.db.users
     print("MongoDB connection established successfully.")
 except Exception as e:
